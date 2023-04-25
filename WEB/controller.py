@@ -1,6 +1,7 @@
 from datetime import datetime
 import hashlib
 import os
+import subprocess
 from flask import(
     Flask,
     jsonify,
@@ -63,25 +64,37 @@ def Download():
     
 @app.route('/files')
 def get_files():
-    files = []
-    size=0
-    path = os.path.expanduser("/home/rike")
-    for filename in os.listdir(path):
-        if os.path.isfile(os.path.join(path, filename)) or os.path.isdir(os.path.join(path, filename)):
-            stats = os.stat(os.path.join(path, filename))
-            modified = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
-            if os.path.isfile(os.path.join(path, filename)):
-                filetype = 'File'
-            else:
-                filetype = 'Directory'
-            files.append({'name': filename, 'type': filetype, 'size': stats.st_size, 'modified': modified})
-    return jsonify(files),size
+    username = session['user_id']  
+    files=UserAccount().getFiles(username)
+    return jsonify(files)
 
-def count_directories(path):
-    count = 0
-    for dirpath, dirnames, filenames in os.walk(path):
-        count += len(dirnames)
-    return count
+@app.route('/num_files')
+def get_num_files():
+    username = session['user_id']
+    password = session['password']
+    num_files=UserAccount().get_nume_files(username,password)
+    return jsonify(num_files)
 
+@app.route('/num_dirs')
+def get_num_dirs():
+    username = session['user_id']
+    password = session['password']
+    num_dirs=UserAccount().get_num_dirs(username,password)
+    return jsonify(num_dirs)
+
+@app.route('/total_size')
+def get_total_size():
+    username = session['user_id']
+    password = session['password']
+    total_size = UserAccount().get_total_size(username,password)
+    return jsonify(total_size)
+@app.route('/search',methods=["POST"])
+def get_searched():
+    if request.method == "POST":
+        username = session['user_id']  
+        name = request.form['search']
+        files=UserAccount().getFiles(username,name)
+        return jsonify(files)
+#aksdokmw;;qownvcewlnmkqvea
 if(__name__ == "__main__"):
     app.run(host="0.0.0.0",port=8800, debug=True)

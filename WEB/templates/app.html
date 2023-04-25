@@ -39,9 +39,11 @@
 		<a href="/space"><button style="background-color: rgb(212, 154, 164);" onclick="showSize()">Space (Size: <span id="size"></span>)</button></a>
     
 	</div>
-    <div class="Search">
-        <input type="search" placeholder="type to search">
-    </div>
+	<form method="POST" action="/search">
+		<div class="Search">
+			<input name="search" type="search" placeholder="type to search">
+		</div>
+	</form>
     <h1>File List</h1>
 	<table>
 		<thead>
